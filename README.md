@@ -1,6 +1,7 @@
 # flutter_responsive_app
 
-A new Flutter project.
+## Aperçu
+![App Page](/apppage.png)
 
 ## Getting Started
 
