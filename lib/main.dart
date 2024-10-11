@@ -39,27 +39,31 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Responsive Product Grid'),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(8.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: ResponsiveValue<int>(
-            context,
-            defaultValue: 1,
-            conditionalValues: [
-              // Condition.between(start: 0, end: 800, value: 1),
-              // Condition.between(start: 801, end: 1000, value: 4),
-              // Condition.between(start: 1001, end: 2000, value: 6),
-              Condition.equals(name: MOBILE, value: 1),
-              Condition.equals(name: TABLET, value: 4),
-              Condition.equals(name: DESKTOP, value: 6),
-            ],
-          ).value,
-          childAspectRatio: 1,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return ProductCard(productName: products[index]);
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(8.0),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: ResponsiveValue<int>(
+                  context,
+                  defaultValue: 1,
+                  conditionalValues: [
+                    Condition.equals(name: MOBILE, value: 1),
+                    Condition.equals(name: TABLET, value: 4),
+                    Condition.equals(name: DESKTOP, value: 6),
+                  ],
+                ).value,
+                childAspectRatio: 1,
+              ),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return ProductCard(productName: products[index]);
+              },
+            ),
+          ),
+          Footer(), // Ajout du footer ici
+        ],
       ),
     );
   }
@@ -73,9 +77,24 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isMobile = ResponsiveBreakpoints.of(context).smallerThan(TABLET);
-    return isMobile
+    return Container(
+      margin: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: isMobile
         ? _buildMobileLayout()
-        : _buildGridLayout();
+        : _buildGridLayout(),
+    );
   }
 
   Widget _buildMobileLayout() {
@@ -94,6 +113,59 @@ class ProductCard extends StatelessWidget {
         Expanded(child: FlutterLogo()),
         SizedBox(height: 10),
         Text(productName),
+      ],
+    );
+  }
+}
+
+class Footer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    bool isMobile = ResponsiveBreakpoints.of(context).smallerThan(TABLET);
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      color: Colors.grey[200],
+      child: isMobile 
+          ? _buildMobileFooter()
+          : _buildDesktopFooter(),
+    );
+  }
+
+  Widget _buildMobileFooter() {
+    return Row(
+      // mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Icon(Icons.home),
+        // SizedBox(width: 16),
+        Icon(Icons.info),
+        // SizedBox(width: 16),
+        Icon(Icons.contact_mail),
+      ],
+    );
+  }
+
+  Widget _buildDesktopFooter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('Bouziane Incorporation', style: TextStyle(fontSize: 16)),
+        Row(
+          children: [
+            Text('About', style: TextStyle(fontSize: 16)),
+            SizedBox(width: 16),
+            Text('Contact', style: TextStyle(fontSize: 16)),
+          ],
+        ),
+        Row(
+          children: [
+            Icon(Icons.home),
+            SizedBox(width: 16),
+            Icon(Icons.info),
+            SizedBox(width: 16),
+            Icon(Icons.contact_mail),
+          ],
+        ),
       ],
     );
   }
